@@ -2,14 +2,13 @@
 package painter
 
 import (
-	"fmt"
 	"image"
 	"time"
 )
 
 // 求平方
-func square(v interface{}) interface{} {
-	return v * v
+func square(v uint8) uint {
+	return uint32(v * v)
 }
 
 // Color: 用于存储RGB值
@@ -34,8 +33,8 @@ type ColorSpace struct {
 
 // 用于匹配单个颜色, 返回Block{方块名称, 特殊值(int)和Y轴偏移量}
 func (s *ColorSpace) MapColor(clr Color) Block {
-	maxDiff := 195075 // 255*255*3
-	index := 0        // 存储最接近的索引值
+	var maxDiff uint32 = 195075 // 255*255*3
+	index := 0                  // 存储最接近的索引值
 	for i, j := range s.Space {
 		diff := square(j.Color.R-clr.R) + square(j.Color.G-clr.G) + square(j.Color.B-clr.B) // 求色差,但是不开平方
 		if diff == 0 {
@@ -84,7 +83,7 @@ func (p *Painter) Next() (int64, int64, int64, string, int) {
 	if p.Index == len(p.Resps)-1 {
 		p.Index = 0
 	}
-	return rx, ry, rz, rn, rd
+	return rx, int64(ry), rz, rn, rd
 }
 
 // GetSize()返回需要调用Next()的次数.

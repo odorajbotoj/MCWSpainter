@@ -3,7 +3,7 @@ package painter
 // Thank you, Python3!
 // warning: 本颜色库仅适用于1.17的三维地图画
 var DefaultColorSpace = ColorSpace{
-	[...]Block{
+	[]Block{
 		// Block{"", , Color{, , }, },
 		Block{"slime", 0, Color{90, 126, 39}, 1},
 		Block{"slime", 0, Color{109, 153, 48}, 0},

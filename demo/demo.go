@@ -3,6 +3,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/odorajbotoj/mcws-painter"
 )
 
 func main() {
