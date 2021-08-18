@@ -7,7 +7,7 @@ import (
 )
 
 // 求平方
-func square(v uint8) uint {
+func square(v uint8) uint32 {
 	return uint32(v * v)
 }
 
@@ -103,7 +103,10 @@ func MapImage(img image.Image, cs ColorSpace, y int, dealy time.Duration) Painte
 		// Z循环, Z- 为北
 		for j := 0; j < dy; j++ {
 			colorRgb := img.At(i, j)
-			r, g, b, _ := colorRgb.RGBA()
+			r, g, b, a := colorRgb.RGBA()
+			if a == 0 {
+				ret[int64((i+1)*(j+1)-1)] = CmdResponse{i, y, j, "air", 0}
+			}
 			//转换为 255 值
 			r_uint8 := uint8(r >> 8)
 			g_uint8 := uint8(g >> 8)
@@ -112,11 +115,11 @@ func MapImage(img image.Image, cs ColorSpace, y int, dealy time.Duration) Painte
 			// 如果memory中检索到此值, 就直接存入返回值; 否则先保存
 			b, ok := memory[pColor]
 			if ok {
-				ret[(i+1)*(j+1)-1] = CmdResponse{i, b.DeltaY, j, b.Name, b.DataValue}
+				ret[int64((i+1)*(j+1)-1)] = CmdResponse{i, b.DeltaY, j, b.Name, b.DataValue}
 			} else {
 				b = cs.MapColor(pColor)
 				re := CmdResponse{i, b.DeltaY, j, b.Name, b.DataValue}
-				ret[(i+1)*(j+1)-1] = re
+				ret[int64((i+1)*(j+1)-1)] = re
 				memory[pColor] = b
 			}
 		}
