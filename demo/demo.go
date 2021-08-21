@@ -5,14 +5,20 @@ import (
 	"fmt"
 	"image"
 	"os"
+	"strconv"
 	"time"
 
-	painter "github.com/odorajbotoj/mcws-painter"
+	painter "github.com/odorajbotoj/MCWSpainter"
 )
 
 func main() {
-	fmt.Println("Hello World!")
-	file, err := os.Open("./grass.png")
+	filename := os.Args[1]
+	worldX := os.Args[2]
+	worldY := os.Args[3]
+	worldZ := os.Args[4]
+	file, err := os.Open(filename)
+	wx := strconv.ParseInt(worldX, 10, 64)
+	wz := strconv.ParseInt(worldZ, 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -23,5 +29,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	p := painter.MapImage(img, painter.DefaultColorSpace, 61, 10*time.Millisecond)
+	p := MapImage(img, DefaultColorSpace, worldY, 10*time.Millisecond)
+	for i := 0; i < p.GetSize(); i++ {
+		ax, ay, az, bn, dv := p.Next()
+		fmt.Printf("setblock %d %d %d %s %d\n", wx+ax, ay, wz+az, bn, dv)
+	}
+	fmt.Println("END")
 }

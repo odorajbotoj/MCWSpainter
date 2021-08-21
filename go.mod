@@ -1,3 +1,3 @@
-module github.com/odorajbotoj/mcws-painter
+module github.com/odorajbotoj/MCWSpainter
 
 go 1.16

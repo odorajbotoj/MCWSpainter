@@ -1,4 +1,4 @@
-package painter
+package MCWSpainter
 
 // Thank you, Python3!
 // warning: 本颜色库仅适用于1.17的三维地图画
