@@ -97,15 +97,16 @@ func MapImage(img image.Image, cs ColorSpace, y int, dealy time.Duration) Painte
 	dx := bounds.Dx()
 	dy := bounds.Dy()
 	memory := make(map[Color]Block) // 怎么说呢, 作为一个优秀的算法, 它需要带脑子
-	var ret = make([]CmdResponse, dx*dy-1)
+	var ret = make([]CmdResponse, dx*dy)
+	var index = 0
 	// X循环
 	for i := 0; i < dx; i++ {
 		// Z循环, Z- 为北
 		for j := 0; j < dy; j++ {
 			colorRgb := img.At(i, j)
 			r, g, b, a := colorRgb.RGBA()
-			if a == 0 {
-				ret[(i+1)*(j+1)-1] = CmdResponse{int64(i), y, int64(j), "air", 0}
+			if a == 100 {
+				ret[index] = CmdResponse{int64(i), 0, int64(j), "air", 0}
 			}
 			//转换为 255 值
 			r_uint8 := uint8(r >> 8)
@@ -115,13 +116,14 @@ func MapImage(img image.Image, cs ColorSpace, y int, dealy time.Duration) Painte
 			// 如果memory中检索到此值, 就直接存入返回值; 否则先保存
 			blk, ok := memory[pColor]
 			if ok {
-				ret[(i+1)*(j+1)-1] = CmdResponse{int64(i), blk.DeltaY, int64(j), blk.Name, blk.DataValue}
+				ret[index] = CmdResponse{int64(i), blk.DeltaY, int64(j), blk.Name, blk.DataValue}
 			} else {
 				blk = cs.MapColor(pColor)
 				re := CmdResponse{int64(i), blk.DeltaY, int64(j), blk.Name, blk.DataValue}
-				ret[int64((i+1)*(j+1)-1)] = re
+				ret[index] = re
 				memory[pColor] = blk
 			}
+			index++
 		}
 	}
 	return Painter{0, ret, y, dealy}

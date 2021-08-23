@@ -4,6 +4,9 @@ package main
 import (
 	"fmt"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 	"strconv"
 	"time"
@@ -17,22 +20,32 @@ func main() {
 	worldY := os.Args[3]
 	worldZ := os.Args[4]
 	file, err := os.Open(filename)
-	wx := strconv.ParseInt(worldX, 10, 64)
-	wz := strconv.ParseInt(worldZ, 10, 64)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
+	}
+	wx, err := strconv.ParseInt(worldX, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	wy, err := strconv.Atoi(worldY)
+	if err != nil {
+		panic(err)
+	}
+	wz, err := strconv.ParseInt(worldZ, 10, 64)
+	if err != nil {
+		panic(err)
 	}
 	defer file.Close()
-	img, err := image.Decode(file)
+	img, _, err := image.Decode(file)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
-	p := MapImage(img, DefaultColorSpace, worldY, 10*time.Millisecond)
-	for i := 0; i < p.GetSize(); i++ {
-		ax, ay, az, bn, dv := p.Next()
-		fmt.Printf("setblock %d %d %d %s %d\n", wx+ax, ay, wz+az, bn, dv)
+	p := painter.MapImage(img, painter.DefaultColorSpace, wy, 10*time.Millisecond)
+	size := p.GetSize()
+	for i := 0; i < size; i++ {
+		ax, _, az, bn, dv := p.Next()
+		// 此处禁用y轴变化, 即导入平面地图画
+		fmt.Printf("setblock %d %d %d %s %d\n", wx+ax, wy, wz+az, bn, dv)
 	}
-	fmt.Println("END")
+	fmt.Println("say ====TASK FINISH====")
 }
